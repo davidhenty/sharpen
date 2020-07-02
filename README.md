@@ -25,9 +25,6 @@ seconds, with between 0.1 and 0.2 seconds for IO.
     <img src="doc/fuzzy.png" width="50%">
   </div>
   <div class="column">
-    <img src="img_forest.jpg" alt="Forest" style="width:100%">
-  </div>
-  <div class="column">
     <img src="doc/sharpened.png" width="50%">
   </div>
 </div>
