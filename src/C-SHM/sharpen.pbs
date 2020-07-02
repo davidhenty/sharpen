@@ -1,0 +1,17 @@
+#!/bin/bash --login
+
+# PBS job options (name, compute nodes, job time)
+#PBS -N sharpen
+#PBS -l select=1
+#PBS -l walltime=00:01:00
+#PBS -A y14
+
+# Ensure enough symmetric memory is available to OpenSHMEM
+export XT_SYMMETRIC_HEAP_SIZE=100M
+
+# Change to the directory that the job was submitted from
+# (remember this should be on the /work filesystem)
+cd $PBS_O_WORKDIR
+
+# Launch the parallel job using 4 processes
+aprun -n 4 ./sharpen
