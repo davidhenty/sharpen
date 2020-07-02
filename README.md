@@ -20,5 +20,17 @@ written in a very naive manner so that it runs for a measurable amount
 of time. Typical timings for the serial program will be around 5
 seconds, with between 0.1 and 0.2 seconds for IO.
 
-<img src="doc/fuzzy.png" width="50%">
-<img src="doc/sharpened.png" width="50%">
+ <div class="row">
+  <div class="column">
+    <img src="doc/fuzzy.png" width="50%">
+  </div>
+  <div class="column">
+    <img src="img_forest.jpg" alt="Forest" style="width:100%">
+  </div>
+  <div class="column">
+    <img src="doc/sharpened.png" width="50%">
+  </div>
+</div>
+
+
+
