@@ -22,8 +22,8 @@ seconds, with between 0.1 and 0.2 seconds for IO.
 
 <centre>
 <p>
-    <img src="doc/fuzzy.png" width="200">
-    <img src="doc/sharpened.png" width="200">
+    <img src="doc/fuzzy.png" height="300">
+    <img src="doc/sharpened.png" height="300">
 </p>
 </centre>
 
