@@ -22,10 +22,10 @@ seconds, with between 0.1 and 0.2 seconds for IO.
 
  <div class="row">
   <div class="column">
-    <img src="doc/fuzzy.png" width="50%">
+    <img src="doc/fuzzy.png" width="30%">
   </div>
   <div class="column">
-    <img src="doc/sharpened.png" width="50%">
+    <img src="doc/sharpened.png" width="30%">
   </div>
 </div>
 
