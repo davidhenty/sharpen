@@ -20,12 +20,11 @@ written in a very naive manner so that it runs for a measurable amount
 of time. Typical timings for the serial program will be around 5
 seconds, with between 0.1 and 0.2 seconds for IO.
 
-<centre>
+<center>
 <p>
     <img src="doc/fuzzy.png" height="300">
     <img src="doc/sharpened.png" height="300">
 </p>
-</centre>
-
+</center>
 
 
