@@ -20,14 +20,11 @@ written in a very naive manner so that it runs for a measurable amount
 of time. Typical timings for the serial program will be around 5
 seconds, with between 0.1 and 0.2 seconds for IO.
 
- <div class="row">
-  <div class="column">
+<p>
     <img src="doc/fuzzy.png" width="30%">
-  </div>
-  <div class="column">
     <img src="doc/sharpened.png" width="30%">
-  </div>
-</div>
+</p>
+
 
 
 
