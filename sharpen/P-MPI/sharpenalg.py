@@ -29,10 +29,10 @@ def dosharpen(pix, infile, outfile):
     rank = comm.Get_rank()
 
     if 0 == rank:
-        print "Using a filter of size ", str(2*d+1), " x ", str(2*d+1), "\n"
-        print "Reading image file ", infile
+        print("Using a filter of size " + str(2*d+1) + " x " + str(2*d+1) + "\n")
+        print("Reading image file " + infile)
         npix = np.array(io.pgmread(infile, fuzzy, nx, ny))
-        print "... done\n"
+        print("... done\n")
     else:
         npix = np.zeros(2, dtype=np.int)
         
@@ -42,7 +42,7 @@ def dosharpen(pix, infile, outfile):
     
     if (0 == xpix or 0 == ypix or nx != xpix or ny != ypix):
         if 0 == rank:
-            print "Error reading ", infile
+            print("Error reading " + infile)
         raise SystemExit
   
     # broadcast the pixel image to all processes
@@ -54,13 +54,13 @@ def dosharpen(pix, infile, outfile):
             fuzzyPadded[i+d][j+d] = fuzzy[i][j]
 
     if 0 == rank:
-        print "Starting calculation ..." 
+        print("Starting calculation ...")
 
     comm.Barrier()
 
     # print out current core and node location
     node_name = MPI.Get_processor_name()
-    print "Rank ", str(rank), " of ", str(size), " on node ", node_name
+    print("Rank " + str(rank) + " of " + str(size) + " on node " + node_name)
     
     tstart = MPI.Wtime()
 
@@ -83,7 +83,7 @@ def dosharpen(pix, infile, outfile):
     time = tstop - tstart
 
     if 0 == rank:
-        print "... finished\n"
+        print("... finished\n")
       
     # gather the partial convolution results computed by individual processes
     comm.Reduce([convolutionPartial, MPI.DOUBLE], [convolution, MPI.DOUBLE], op=MPI.SUM, root=0)
@@ -95,7 +95,7 @@ def dosharpen(pix, infile, outfile):
             for j in range(ny):
                 sharp[i][j] = fuzzyPadded[i+d][j+d] - scale/norm * convolution[i][j]
       
-        print "Writing output file: ", outfile
+        print("Writing output file: " + outfile)
 
         # only save the core of the sharpened image to remove edge effects
         for i in range(d,nx-d):
@@ -104,8 +104,8 @@ def dosharpen(pix, infile, outfile):
               
         io.pgmwrite(outfile, sharpCropped, nx-2*d, ny-2*d)
 
-        print "... done\n"
-        print "Calculation time was ", str(time), " seconds"
+        print("... done\n")
+        print("Calculation time was " + str(time) + " seconds")
     
        
 def filter(d, i, j):
