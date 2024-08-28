@@ -17,9 +17,9 @@ def pgmread(fname, pixmap, nxmax, nymax):
     nx = n[0]
     ny = n[1]
     if (nx > nxmax or ny > nymax):
-        print "pgmread: image larger than array.\n"
-        print "nxmax, nymax, nx, ny = "
-        print str(nxmax), ", ", str(nymax), ", ", str(nx), ", ", str(ny), ".\n"
+        print("pgmread: image larger than array.\n")
+        print("nxmax, nymax, nx, ny = ")
+        print(str(nxmax), ", ", str(nymax), ", ", str(nx), ", ", str(ny), ".\n")
         raise SystemExit
 
     f = open(fname, 'r')

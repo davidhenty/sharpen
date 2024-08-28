@@ -58,6 +58,7 @@ void dosharpen(char *infile, int nx, int ny, MPI_Comm comm)
         {
           fuzzy[i][j] = 0;        
           sharp[i][j] = 0.0;
+          convolutionPartial[i][j] = 0.0;
         }
     }
 

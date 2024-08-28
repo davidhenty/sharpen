@@ -3,10 +3,13 @@
  *  (to detect the edges). Input and output is via Portable Grey Map (PGM)
  *  files - note that the input file must have a specific header format.
  *
- *  In this traditional, serial version of the program the image processing
- *  is performed by one single-threaded process running on a single core.
- *  The fuzzy image is read in, the convolution computed and then added to 
- *  the fuzzy image. The resulting sharp image is written to file.
+ *  In this version of the program the image processing is parallelised 
+ *  using OpenMP threads. The master thread reads in the fuzzy image and
+ *  stores it in shared memory. Further threads are launched, the convolution
+ *  computation is distributed over all threads (including the master thread),
+ *  and the result stored in shared memory. Finally the master thread adds the 
+ *  convolution result to the fuzzy image and writes the resulting sharp image
+ *  to file.
  *  
  *  David Henty, EPCC, September 2009
  *  Arno Proeme, EPCC, March 2013 (minor modifications)
@@ -16,12 +19,12 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <omp.h>
-#include "sharpen.h"
 #include "utilities.h"
+#include "sharpen.h"
 
 void dosharpen(char *infile, int nx, int ny)
 {
-  int d = 8;
+  int d = 8;  
   /* Sets the linear range of the sharpen filter as measured from any given pixel:
      only pixels within a (2d+1)*(2d+1) square centered on the pixel are used to 
      compute its new value. */
@@ -29,19 +32,20 @@ void dosharpen(char *infile, int nx, int ny)
   double  norm = (2*d-1)*(2*d-1);
   double scale = 2.0;
   
+  int nthreads, threadid;
   int xpix, ypix, pixcount;
   
-  int i, j, k, l;
+  int i, j, k, l, dtmp;
   double tstart, tstop, time;
   
-  int **fuzzy = int2Dmalloc(nx, ny);                   /* Will store the fuzzy input image when it is first read in from file */
-  double **fuzzyPadded = double2Dmalloc(nx+2*d, ny+2*d);  /* Will store the fuzzy input image plus additional border padding */
-  double **convolution = double2Dmalloc(nx, ny);          /* Will store the convolution of the filter with the full fuzzy image */
-  double **sharp = double2Dmalloc(nx, ny);                /* Will store the sharpened image obtained by adding rescaled convolution to the fuzzy image */
-  double **sharpCropped = double2Dmalloc(nx-2*d, ny-2*d); /* Will store the sharpened image cropped to remove a border layer distorted by the algorithm */
+  int fuzzy[nx][ny];                   /* Will store the fuzzy input image when it is first read in from file                        */
+  double fuzzyPadded[nx+2*d][ny+2*d];  /* Will store the fuzzy input image plus additional border padding                            */
+  double convolution[nx][ny];          /* Will store the convolution of the filter with the fuzzy image                              */
+  double sharp[nx][ny];                /* Will store the sharpened image obtained by adding the  convolution to the fuzzy image      */
+  double sharpCropped[nx-2*d][ny-2*d]; /* Will store the sharpened image cropped to remove a border layer distorted by the algorithm */
   
   char *outfile = "sharpened.pgm";
-
+  
   /* Initialise image arrays */
   for (i=0; i < nx; i++)
     {
@@ -59,7 +63,7 @@ void dosharpen(char *infile, int nx, int ny)
   printf("Reading image file: %s\n", infile);
   fflush(stdout);
        
-  pgmread(infile, &fuzzy[0][0], nx, ny, &xpix, &ypix);
+  pgmread(infile, fuzzy, nx, ny, &xpix, &ypix);
   printf("... done\n\n");
   fflush(stdout);
   
@@ -89,12 +93,20 @@ void dosharpen(char *infile, int nx, int ny)
     }
   
   printf("Starting calculation ...\n");
-  
-  fflush(stdout);
+
+  /* Print out thread location. */
+#pragma omp parallel
+{
   printlocation();
-  fflush(stdout);
-  
-  tstart = wtime();
+}  
+
+  tstart = omp_get_wtime();
+
+  /* Start of parallel region where filter is applied to fuzzy image */
+#pragma omp parallel private(i, j, k, l, dtmp, pixcount, threadid)
+{
+  nthreads  = omp_get_num_threads();
+  threadid = omp_get_thread_num();
   
   pixcount = 0;
   
@@ -102,18 +114,27 @@ void dosharpen(char *infile, int nx, int ny)
     {
       for (j=0; j < ny; j++)
         {
-          for (k=-d; k <= d; k++)
+          dtmp = 2 + ((d-1)*(i+j))/(nx+ny);
+
+          /* Computation of convolution allocated to threads using simple cyclic distribution
+             i.e. consecutively numbered threads take turns computing convolution for consecutive pixels */
+          if (pixcount%nthreads  == threadid)
             {
-              for (l= -d; l <= d; l++)
+              for (k=-dtmp; k <= dtmp; k++)
                 {
-                  convolution[i][j] = convolution[i][j] + filter(d,k,l)*fuzzyPadded[i+d+k][j+d+l];
+                  for (l= -dtmp; l <= dtmp; l++)
+                    {
+                      convolution[i][j] = convolution[i][j] + filter(dtmp,k,l)*fuzzyPadded[i+dtmp+k][j+dtmp+l];
+                    }
                 }
             }
           pixcount += 1;
         }
     }
+}
+  /* End of parallel region and convolution computation */
   
-  tstop = wtime();
+  tstop = omp_get_wtime();
   time = tstop - tstart;
   
   printf("... finished\n");
@@ -141,50 +162,10 @@ void dosharpen(char *infile, int nx, int ny)
         }
     }
   
-  pgmwrite(outfile, &sharpCropped[0][0], nx-2*d, ny-2*d);
+  pgmwrite(outfile, sharpCropped, nx-2*d, ny-2*d);
   
   printf("... done\n");
   printf("\n");
   printf("Calculation time was %f seconds\n", time);
   fflush(stdout);
-
-  free(fuzzy);
-  free(fuzzyPadded);
-  free(convolution);
-  free(sharp);
-  free(sharpCropped);
-}
-
-int **int2Dmalloc(int nx, int ny)
-{
-  int i;
-  int **idata;
-
-  idata = (int **) malloc(nx*sizeof(int *) + nx*ny*sizeof(int));
-
-  idata[0] = (int *) (idata + nx);
-
-  for(i=1; i < nx; i++)
-    {
-      idata[i] = idata[i-1] + ny;
-    }
-
-  return idata;
-}
-
-double **double2Dmalloc(int nx, int ny)
-{
-  int i;
-  double **ddata;
-
-  ddata = (double **) malloc(nx*sizeof(double *) + nx*ny*sizeof(double));
-
-  ddata[0] = (double *) (ddata + nx);
-
-  for(i=1; i < nx; i++)
-    {
-      ddata[i] = ddata[i-1] + ny;
-    }
-
-  return ddata;
 }
