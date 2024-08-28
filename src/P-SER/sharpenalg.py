@@ -47,15 +47,11 @@ def dosharpen(pix, infile, outfile):
 
     pixcount = 0
 
-#    print("start: convolution[", 1+d, "][", d, "] = ", convolution[1+d][d])
-
     for i in range(nx):
         for j in range(ny):
             for k in range(-d,d+1):
                 for l in range(-d,d+1):
                     convolution[i][j] = convolution[i][j] + filter(d,k,l)*fuzzyPadded[i+d+k][j+d+l]
-#                    if (i == d+1 and j == d):
-#                        print("k = ", k, ", l = ", l, ", convolution[", i, "][", j, "] = ", convolution[1+d][d])
 
             pixcount += 1
       
