@@ -20,6 +20,9 @@ written in a very naive manner so that it runs for a measurable amount
 of time. Typical timings for the serial program will be around 5
 seconds, with between 0.1 and 0.2 seconds for IO.
 
+Here are the results before and after the sharpening process - thanks
+to Visa Korkiakoski for permission to use this image.
+
 <p align="center">
     <img src="doc/fuzzy.png" height="300">
     <img src="doc/sharpened.png" height="300">
