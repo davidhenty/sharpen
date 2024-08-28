@@ -41,7 +41,7 @@ if 0 == rank:
     pix = np.array(io.pgmsize(infile))
     print("Image size is ", str(pix[0]), " x ", str(pix[1]), "\n")
 else:
-    pix = np.zeros(2, dtype=np.int)
+    pix = np.zeros(2, dtype=int)
           
 comm.Bcast([pix, MPI.INT], root=0)
 
