@@ -17,9 +17,9 @@ def pgmread(fname, pixmap, nxmax, nymax):
     nx = n[0]
     ny = n[1]
     if (nx > nxmax or ny > nymax):
-        print "pgmread: image larger than array.\n"
-        print "nxmax, nymax, nx, ny = "
-        print str(nxmax), ", ", str(nymax), ", ", str(nx), ", ", str(ny), ".\n"
+        print("pgmread: image larger than array.\n")
+        print("nxmax, nymax, nx, ny = ")
+        print(str(nxmax), ", ", str(nymax), ", ", str(nx), ", ", str(ny), ".\n")
         raise SystemExit
 
     f = open(fname, 'r')
@@ -68,7 +68,7 @@ def pgmwrite(fname, pixmap, nx, ny):
     f = open(fname,'w')
     
     f.write("P2\n")
-    f.write("# Written by pgmwrite\n")
+    f.write("# Written by pgmwrite (Python)\n")
     f.write(str(nx) + " " + str(ny) + "\n")
     f.write(str(int(thresh)) + "\n")
     
@@ -90,7 +90,7 @@ def pgmwrite(fname, pixmap, nx, ny):
             # increase the contrast by boosting the lower values?
             #grey = thresh * sqrt(tmp/thresh)
 
-            f.write(str(grey) + " ")
+            f.write(f"{grey:3} ")
 
             if (0 == (k+1) % PIXPERLINE):
                 f.write("\n")
