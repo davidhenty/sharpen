@@ -68,7 +68,7 @@ def pgmwrite(fname, pixmap, nx, ny):
     f = open(fname,'w')
     
     f.write("P2\n")
-    f.write("# Written by pgmwrite\n")
+    f.write("# Written by pgmwrite (Python)\n")
     f.write(str(nx) + " " + str(ny) + "\n")
     f.write(str(int(thresh)) + "\n")
     
@@ -90,7 +90,7 @@ def pgmwrite(fname, pixmap, nx, ny):
             # increase the contrast by boosting the lower values?
             #grey = thresh * sqrt(tmp/thresh)
 
-            f.write(str(grey) + " ")
+            f.write(f"{grey:3} ")
 
             if (0 == (k+1) % PIXPERLINE):
                 f.write("\n")
