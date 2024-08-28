@@ -53,6 +53,7 @@ void dosharpen(char *infile, int nx, int ny)
         {
           fuzzy[i][j] = 0;
           sharp[i][j] = 0.0;
+          convolution[i][j] = 0.0;
         }
     }
   

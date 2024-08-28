@@ -36,10 +36,10 @@ comm.Barrier()
 tstart = MPI.Wtime()
 
 if 0 == rank:
-    print("\nImage sharpening code running on " + str(size) + " processor(s)\n")
-    print("Input file is " + infile + "\n")
+    print("\nImage sharpening code running on ", str(size), " processor(s)\n")
+    print("Input file is ", infile, "\n")
     pix = np.array(io.pgmsize(infile))
-    print("Image size is " + str(pix[0]) + " x " + str(pix[1]) + "\n")
+    print("Image size is ", str(pix[0]), " x ", str(pix[1]), "\n")
 else:
     pix = np.zeros(2, dtype=np.int)
           
@@ -53,4 +53,4 @@ tstop = MPI.Wtime()
 tdiff = tstop - tstart
 
 if 0 == rank:
-    print("Overall run time was " + str(tdiff) + " seconds")
+    print("Overall run time was ", str(tdiff), " seconds")
