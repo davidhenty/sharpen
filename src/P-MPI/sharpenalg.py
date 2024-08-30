@@ -34,7 +34,7 @@ def dosharpen(pix, infile, outfile):
         npix = np.array(io.pgmread(infile, fuzzy, nx, ny))
         print("... done\n")
     else:
-        npix = np.zeros(2, dtype=np.int)
+        npix = np.zeros(2, dtype=int)
         
     comm.Bcast([npix, MPI.INT], root=0)
     xpix = npix[0]
