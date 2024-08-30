@@ -18,7 +18,7 @@ parallel calculation). The program could easily be made orders of
 magnitude faster with some simple modifications. It is deliberately
 written in a very naive manner so that it runs for a measurable amount
 of time. Typical timings for the compiled serial program will be a
-couple of seconds, with around 0.1 to 0.2 seconds for IO.
+few seconds, with around 0.1 to 0.2 seconds for IO.
 
 Here are the results before and after the sharpening process - thanks
 to Visa Korkiakoski for permission to use this image.
