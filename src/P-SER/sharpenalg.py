@@ -16,7 +16,7 @@ def dosharpen(pix, infile, outfile):
     scale = 2.0
   
     # arrays automatically initialised to zero
-    fuzzy = np.zeros((nx, ny), dtype=np)                    # stores the fuzzy input image when it is first read in from file
+    fuzzy = np.zeros((nx, ny), dtype=int)                    # stores the fuzzy input image when it is first read in from file
     fuzzyPadded = np.zeros((nx+2*d, ny+2*d), dtype=np.double)   # stores the fuzzy input image plus additional border padding
     convolution = np.zeros((nx, ny), dtype=np.double)           # stores the convolution of the filter with the full fuzzy image
     sharp = np.zeros((nx, ny), dtype=np.double)                 # stores the sharpened image obtained by adding rescaled convolution to the fuzzy image
