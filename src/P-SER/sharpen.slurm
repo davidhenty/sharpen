@@ -4,7 +4,7 @@
 #SBATCH --job-name=sharpen
 #SBATCH --time=0:10:0
 #SBATCH --ntasks=1
-#SBATCH --account=tc063
+##SBATCH --account=tc063
 #SBATCH --partition=standard
 #SBATCH --qos=short
 
