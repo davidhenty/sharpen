@@ -37,7 +37,7 @@ void dosharpen(char *infile, int nx, int ny)
   
   int xpix, ypix;
   
-  int i, j, k, l;
+  int i, j;
   double tstart, tstop, time;
   
   int fuzzy[nx][ny];                   /* Will store the fuzzy input image when it is first read in from file                        */
@@ -102,15 +102,18 @@ void dosharpen(char *infile, int nx, int ny)
 
   // Copy
 
-  cudaMemcpy(convolution, d_conv, nx*ny*sizeof(double),
-             cudaMemcpyDeviceToHost);
+  cudaMemcpy(d_conv, convolution, nx*ny*sizeof(double),
+             cudaMemcpyHostToDevice);
 
-  cudaMemcpy(fuzzyPadded, d_fuzzyp, (nx+2*d)*(ny+2*d)*sizeof(double),
-             cudaMemcpyDeviceToHost);
+  cudaMemcpy(d_fuzzyp, fuzzyPadded, (nx+2*d)*(ny+2*d)*sizeof(double),
+             cudaMemcpyHostToDevice);
 
 
   dim3 nthread = {16, 16, 1}; // 256 in a 16x16 grid
   dim3 nblock  = {(nx+nthread.x-1)/nthread.x, (ny+nthread.y-1)/nthread.y, 1};
+
+  printf("thread grid = %d x %d\n", nthread.x, nthread.y);
+  printf("block  grid = %d x %d\n", nblock.x, nblock.y);
 
   printf("Starting calculation ...\n");
   tstart = wtime();
@@ -124,6 +127,9 @@ void dosharpen(char *infile, int nx, int ny)
   tstop = wtime();
   time = tstop - tstart;
   
+  cudaMemcpy(convolution, d_conv, nx*ny*sizeof(double),
+             cudaMemcpyDeviceToHost);
+
   printf("... finished\n");
   printf("\n");
   fflush(stdout);

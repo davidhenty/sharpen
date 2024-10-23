@@ -1,27 +1,58 @@
 __global__
 void dosharpenpixel(int nx, int ny, int d, 
                     double *convolution, double *fuzzyPadded)
-  {
-    int i = blockIdx.x*blockDim.x + threadIdx.x;
-    int j = blockIdx.y*blockDim.y + threadIdx.y;
+{
+  int i = blockIdx.x*blockDim.x + threadIdx.x;
+  int j = blockIdx.y*blockDim.y + threadIdx.y;
 
-    int idx;
+  int idx, idxp, idxppk;
+  double fval;
 
-    if (i < nx && j < ny)
-      {
-        idx  = i*ny + j;
-        idxp = i*(ny+2*d) + (j+2*d);
+  double rd4sq, rsq, sigmad4sq, sigmasq, x, y, delta;
 
-        for (int k= -d; k <= d; k++)
-          {
-            idxppk = idxp + k*(ny+2*d);
+  int d4 = 4;
 
-            for (int l= -d; l <= d; l++)
-              {
-                convolution[idx] = convolution[idx] + 
-                                   filter(d,k,l)*fuzzyPadded[idxppk+l];
-              }
-          }
-      }
-  }
+  double sigmad4 = 1.4;
+  double filter0 = -40.0;
 
+  rd4sq = d4*d4;
+  rsq   = d*d;
+
+  sigmad4sq = sigmad4*sigmad4;
+  sigmasq   = sigmad4sq * (rsq/rd4sq);
+
+  if (i < nx && j < ny)
+    {
+      idx  = i*ny + j;
+      idxp = i*(ny+2*d) + (j+2*d);
+
+      /*      if ((i < nx/2) && (j < ny/2) || (i >= nx/2) && (j >= ny/2))
+        {
+          convolution[idx] = 127;
+        }
+      else
+        {
+          convolution[idx] = 255;
+          } */
+      
+      for (int k= -d; k <= d; k++)
+        {
+          idxppk = idxp + k*(ny+2*d);
+
+          for (int l= -d; l <= d; l++)
+            {
+              x = (double) i;
+              y = (double) j;
+
+              rsq = x*x + y*y;
+
+              delta = rsq/(2.0*sigmasq);
+
+              fval = filter0 * (1.0-delta) * exp(-delta);
+
+              convolution[idx] = convolution[idx]
+                               + fval*fuzzyPadded[idxppk+2*d+l];
+            }
+        }
+    }
+}
