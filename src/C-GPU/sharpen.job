@@ -1,0 +1,15 @@
+#!/bin/bash
+
+# Slurm job options (name, compute nodes, job time)
+#SBATCH --job-name=sharpen
+#SBATCH --time=00:01:00
+#SBATCH --output=%x-%j.out
+#SBATCH --gres=gpu:1
+#SBATCH --qos=gpu
+#SBATCH --partition=gpu
+
+module load nvidia/nvhpc
+
+# Launch the parallel job
+
+srun --unbuffered ./sharpen
