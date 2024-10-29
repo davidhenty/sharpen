@@ -1,3 +1,6 @@
+#include <stdio.h>
+#include <math.h>
+
 __global__
 void dosharpenpixel(int nx, int ny, int d, 
                     double *convolution, double *fuzzyPadded)
@@ -24,7 +27,7 @@ void dosharpenpixel(int nx, int ny, int d,
   if (i < nx && j < ny)
     {
       idx  = i*ny + j;
-      idxp = i*(ny+2*d) + (j+2*d);
+      idxp = (i+d)*(ny+2*d) + (j+d);
 
       /*      if ((i < nx/2) && (j < ny/2) || (i >= nx/2) && (j >= ny/2))
         {
@@ -41,8 +44,8 @@ void dosharpenpixel(int nx, int ny, int d,
 
           for (int l= -d; l <= d; l++)
             {
-              x = (double) i;
-              y = (double) j;
+              x = (double) k;
+              y = (double) l;
 
               rsq = x*x + y*y;
 
@@ -50,8 +53,10 @@ void dosharpenpixel(int nx, int ny, int d,
 
               fval = filter0 * (1.0-delta) * exp(-delta);
 
-              convolution[idx] = convolution[idx]
-                               + fval*fuzzyPadded[idxppk+2*d+l];
+              //              printf("i, j, k, l, idx, idxppk+l = %d, %d, %d, %d, %d, %d, convolution[idx], filter(d,k,l), fuzzyPadded[idxppk+l] = %f, %f, %f\n", i, j, k, l, idx, idxppk+l, convolution[idx], fval, fuzzyPadded[idxppk+l]);
+
+                  convolution[idx] = convolution[idx]
+                               + fval*fuzzyPadded[idxppk+l];
             }
         }
     }

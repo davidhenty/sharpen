@@ -27,7 +27,7 @@ __global__ void dosharpenpixel(int nx, int ny, int d,
 
 void dosharpen(char *infile, int nx, int ny)
 {
-  int d = 8;  
+  int d = 8;
   /* Sets the linear range of the sharpen filter as measured from any given pixel:
      only pixels within a (2d+1)*(2d+1) square centered on the pixel are used to 
      compute its new value. */
