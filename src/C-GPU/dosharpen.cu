@@ -3,13 +3,14 @@
  *  (to detect the edges). Input and output is via Portable Grey Map (PGM)
  *  files - note that the input file must have a specific header format.
  *
- *  In this version of the program the image processing is parallelised 
- *  using OpenMP threads. The master thread reads in the fuzzy image and
- *  stores it in shared memory. Further threads are launched, the convolution
- *  computation is distributed over all threads (including the master thread),
- *  and the result stored in shared memory. Finally the master thread adds the 
- *  convolution result to the fuzzy image and writes the resulting sharp image
- *  to file.
+ *  In this version of the program the image processing is
+ *  parallelised using CUDA for a GPU device. The CPU reads in the
+ *  fuzzy image and stores it in host memory which is then copied to
+ *  device memory on the GPU. CUDA kernels are launched on the GPU and
+ *  the convolution computation is distributed over all CUDA threads.
+ *  Finally, the CPU copies the result back to host memory, adds the
+ *  convolution result to the fuzzy image and writes the resulting
+ *  sharp image to file.
  *  
  *  David Henty, EPCC, September 2009
  *  Arno Proeme, EPCC, March 2013 (minor modifications)
