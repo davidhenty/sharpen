@@ -125,7 +125,7 @@ void dosharpen(char *infile, int nx, int ny, int verbose)
       printf("thread grid = %d x %d\n", nthread.x, nthread.y);
       printf("block  grid = %d x %d\n", nblock.x, nblock.y);
 
-      printf("Starting calculation ...\n");
+      printf("\nStarting calculation ...\n");
     }
 
   tstart = wtime();
@@ -183,6 +183,8 @@ void dosharpen(char *infile, int nx, int ny, int verbose)
       printf("Calculation time was %f seconds\n", time);
       fflush(stdout);
     }
+
+  // Free memory
+  cudaFree(d_conv);
+  cudaFree(d_fuzzyp);
 }
-
-
