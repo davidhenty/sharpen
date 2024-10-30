@@ -18,7 +18,7 @@ LFLAGS=	-arch=sm_70 -g -lm
 
 EXE=	sharpen
 
-CSRC= \
+SRC= \
 	filter.cu \
 	dosharpen.cu \
 	dosharpenpixel.cu \
@@ -36,15 +36,9 @@ INC = \
 #
 
 .SUFFIXES:
-.SUFFIXES: .c .cu .o
+.SUFFIXES: .cu .o
 
-COBJ=	$(CSRC:.c=.o)
-CUOBJ=	$(CUSRC:.cu=.o)
-
-OBJ=$(COBJ) $(CUOBJ)
-
-.c.o:
-	$(CC) $(CFLAGS) -c $<
+OBJ=	$(SRC:.cu=.o)
 
 .cu.o:
 	$(CC) $(CFLAGS) -c $<
