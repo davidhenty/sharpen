@@ -25,7 +25,7 @@
 __global__ void dosharpenpixel(int nx, int ny, int d,
                     double *convolution, double *fuzzyPadded);
 
-void dosharpen(char *infile, int nx, int ny)
+void dosharpen(char *infile, int nx, int ny, int verbose)
 {
   int d = 8;
   /* Sets the linear range of the sharpen filter as measured from any given pixel:
@@ -60,17 +60,20 @@ void dosharpen(char *infile, int nx, int ny)
           convolution[i][j] = 0.0;
         }
     }
-  
-  printf("Using a filter of size %d x %d\n", 2*d+1, 2*d+1);
-  printf("\n");
 
-  printf("Reading image file: %s\n", infile);
-  fflush(stdout);
+  if (verbose)
+    {
+      printf("Using a filter of size %d x %d\n", 2*d+1, 2*d+1);
+      printf("\n");
+
+      printf("Reading image file: %s\n", infile);
+      fflush(stdout);
        
-  pgmread(infile, fuzzy, nx, ny, &xpix, &ypix);
-  printf("... done\n\n");
-  fflush(stdout);
-  
+      pgmread(infile, fuzzy, nx, ny, &xpix, &ypix);
+      printf("... done\n\n");
+      fflush(stdout);
+    }  
+
   if (xpix == 0 || ypix == 0 || nx != xpix || ny != ypix)
     {
       printf("Error reading %s\n", infile);
@@ -112,15 +115,20 @@ void dosharpen(char *infile, int nx, int ny)
   dim3 nthread = {16, 16, 1}; // 256 in a 16x16 grid
   dim3 nblock  = {(nx+nthread.x-1)/nthread.x, (ny+nthread.y-1)/nthread.y, 1};
 
-  printf("thread grid = %d x %d\n", nthread.x, nthread.y);
-  printf("block  grid = %d x %d\n", nblock.x, nblock.y);
+  if (verbose)
+    {
+      printf("thread grid = %d x %d\n", nthread.x, nthread.y);
+      printf("block  grid = %d x %d\n", nblock.x, nblock.y);
 
-  printf("Starting calculation ...\n");
+      printf("Starting calculation ...\n");
+    }
+
   tstart = wtime();
 
   /* Start of parallel region where filter is applied to fuzzy image */
 
   dosharpenpixel<<<nblock, nthread>>>(nx, ny, d, d_conv, d_fuzzyp);
+  cudaDeviceSynchronize();
   
   /* End of parallel region and convolution computation */
   
@@ -130,9 +138,12 @@ void dosharpen(char *infile, int nx, int ny)
   cudaMemcpy(convolution, d_conv, nx*ny*sizeof(double),
              cudaMemcpyDeviceToHost);
 
-  printf("... finished\n");
-  printf("\n");
-  fflush(stdout);
+  if (verbose)
+    {
+      printf("... finished\n");
+      printf("\n");
+      fflush(stdout);
+    }
   
   /* Add rescaled convolution to fuzzy image to obtain sharp image */
   for (i=0; i < nx; i++)
@@ -142,9 +153,12 @@ void dosharpen(char *infile, int nx, int ny)
           sharp[i][j] = fuzzyPadded[i+d][j+d] - scale/norm * convolution[i][j];
         }
     }
-  
-  printf("Writing output file: %s\n", outfile);
-  printf("\n");
+
+  if (verbose)
+    {
+      printf("Writing output file: %s\n", outfile);
+      printf("\n");
+    }
   
   /* Only save the core of the sharpened image to remove edge effects */
   for (i=d ; i < nx-d; i++)
@@ -156,11 +170,14 @@ void dosharpen(char *infile, int nx, int ny)
     }
   
   pgmwrite(outfile, sharpCropped, nx-2*d, ny-2*d);
-  
-  printf("... done\n");
-  printf("\n");
-  printf("Calculation time was %f seconds\n", time);
-  fflush(stdout);
+
+  if (verbose)
+    {
+      printf("... done\n");
+      printf("\n");
+      printf("Calculation time was %f seconds\n", time);
+      fflush(stdout);
+    }
 }
 
 

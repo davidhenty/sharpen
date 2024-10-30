@@ -1,7 +1,7 @@
 #include <math.h>
 
-__global__
-void filter(double *val, int d, int i, int j)
+__device__
+double filter(int d, int i, int j)
 {
   double rd4sq, rsq, sigmad4sq, sigmasq, x, y, delta;
 
@@ -23,5 +23,5 @@ void filter(double *val, int d, int i, int j)
 
   delta = rsq/(2.0*sigmasq);
 
-  *val = filter0 * (1.0-delta) * exp(-delta);
+  return(filter0 * (1.0-delta) * exp(-delta));
 }
