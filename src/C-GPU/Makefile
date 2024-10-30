@@ -12,16 +12,15 @@ MF=	Makefile
 
 #For Cirrus GPU use nvidia
 CC=	nvcc
-#CFLAGS=	-mp=gpu -g -DC_OPENMP_PRACTICAL
 CFLAGS=	-arch=sm_70 -g -DC_SERIAL_PRACTICAL -dc
 LFLAGS=	-arch=sm_70 -g -lm
 
 EXE=	sharpen
 
 SRC= \
-	filter.cu \
 	dosharpen.cu \
 	dosharpenpixel.cu \
+	filter.cu \
 	sharpen.cu \
 	cio.cu \
 	utilities.cu

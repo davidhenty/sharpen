@@ -68,8 +68,12 @@ void dosharpen(char *infile, int nx, int ny, int verbose)
 
       printf("Reading image file: %s\n", infile);
       fflush(stdout);
+    }
        
-      pgmread(infile, fuzzy, nx, ny, &xpix, &ypix);
+    pgmread(infile, fuzzy, nx, ny, &xpix, &ypix);
+
+  if (verbose)
+    {
       printf("... done\n\n");
       fflush(stdout);
     }  

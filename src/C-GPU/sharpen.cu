@@ -49,13 +49,13 @@ int main(void)
   
   // Initial dummy call to warm up the GPU
 
-  dosharpen(filename, xpix, ypix, FALSE);
+  dosharpen(filename, xpix, ypix, false);
 
   // Now measure the time
 
   tstart  = wtime();
   
-  dosharpen(filename, xpix, ypix, TRUE);
+  dosharpen(filename, xpix, ypix, true);
   
   tstop = wtime();
   time  = tstop - tstart;
