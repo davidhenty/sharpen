@@ -16,7 +16,9 @@
  *  Dominic Sloan-Murphy, EPCC, May 2014
  */
  
+#ifndef _GNU_SOURCE
 #define _GNU_SOURCE
+#endif
 #include <stdio.h>
 #include <unistd.h>
 #include <string.h>
