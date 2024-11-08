@@ -5,10 +5,13 @@
 #SBATCH --time=00:01:00
 #SBATCH --output=%x-%j.out
 #SBATCH --gres=gpu:1
-#SBATCH --qos=gpu
 #SBATCH --partition=gpu
+##SBATCH --qos=gpu
+#SBATCH --qos=reservation
+#SBATCH --reservation=m24oc_1369492
 
-module load nvidia/nvhpc
+module --silent load gcc
+module --silent load nvidia/nvhpc
 
 # Launch the parallel job
 
