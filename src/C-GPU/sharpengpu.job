@@ -5,6 +5,7 @@
 #SBATCH --time=00:01:00
 #SBATCH --output=%x-%j.out
 #SBATCH --gres=gpu:1
+#SBATCH --exclusive
 #SBATCH --partition=gpu
 ##SBATCH --qos=gpu
 #SBATCH --qos=reservation
