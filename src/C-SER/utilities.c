@@ -15,11 +15,12 @@
  *
  *  Dominic Sloan-Murphy, EPCC, May 2014
  */
- 
+
 #define _GNU_SOURCE
 #include <stdio.h>
 #include <unistd.h>
 #include <string.h>
+#include <limits.h>
 #include <sched.h>
 
 #if defined(C_HYBRID_PRACTICAL) || defined(F_HYBRID_PRACTICAL) || defined(C_MPI_PRACTICAL) || defined(F_MPI_PRACTICAL) || defined(C_OPENSHMEM_PRACTICAL) || defined(F_OPENSHMEM_PRACTICAL)
@@ -79,6 +80,10 @@ void printlocation()
     MPI_Comm_rank(MPI_COMM_WORLD, &rank);    
     memset(hnbuf, 0, sizeof(hnbuf));
     MPI_Get_processor_name(hnbuf, &namelen);
+#elif defined(C_SERIAL_PRACTICAL)
+    char hnbuf[HOST_NAME_MAX+1];
+    hnbuf[HOST_NAME_MAX] = '\n';
+    gethostname(hnbuf, HOST_NAME_MAX);
 #endif /* C_HYBRID_PRACTICAL || F_HYBRID_PRACTICAL || C_MPI_PRACTICAL || F_MPI_PRACTICAL || C_OPENSHMEM_PRACTICAL || F_OPENSHMEM_PRACTICAL */    
 
 #if defined(C_OPENMP_PRACTICAL) || defined(F_OPENMP_PRACTICAL) || defined(C_HYBRID_PRACTICAL) || defined(F_HYBRID_PRACTICAL)
@@ -98,6 +103,8 @@ void printlocation()
     printf("Rank %d on core %s of node <%s>\n", rank, clbuf, hnbuf);
 #elif defined(C_OPENMP_PRACTICAL) || defined(F_OPENMP_PRACTICAL)
     printf("Thread %d on core %s\n", thread, clbuf);
+#elif defined(C_SERIAL_PRACTICAL)
+    printf("Program on core %s of node <%s>\n",clbuf, hnbuf);
 #else /* if defined(C_SERIAL_PRACTICAL) || defined(F_SERIAL_PRACTICAL) */
     printf("Program on core %s\n",clbuf);
 #endif /* C_HYBRID_PRACTICAL || F_HYBRID_PRACTICAL */
