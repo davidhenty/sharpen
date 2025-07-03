@@ -4,10 +4,10 @@
  *  files - note that the input file must have a specific header format.
  *
  *  In this version of the program the image processing is
- *  parallelised using CUDA for a GPU device. The CPU reads in the
+ *  parallelised using HIP for a GPU device. The CPU reads in the
  *  fuzzy image and stores it in host memory which is then copied to
- *  device memory on the GPU. CUDA kernels are launched on the GPU and
- *  the convolution computation is distributed over all CUDA threads.
+ *  device memory on the GPU. HIP kernels are launched on the GPU and
+ *  the convolution computation is distributed over all HIP threads.
  *  Finally, the CPU copies the result back to host memory, adds the
  *  convolution result to the fuzzy image and writes the resulting
  *  sharp image to file.
@@ -19,7 +19,7 @@
 
 #include <stdio.h>
 #include <stdlib.h>
-#include <cuda.h>
+#include <hip/hip_runtime.h>
 #include "utilities.h"
 #include "sharpen.h"
 
@@ -104,17 +104,17 @@ void dosharpen(char *infile, int nx, int ny, int verbose)
         }
     }
 
-  // Allocate CUDA memory
-  cudaMalloc((void **) &d_conv,   nx*ny*sizeof(double));
-  cudaMalloc((void **) &d_fuzzyp, (nx+2*d)*(ny+2*d)*ny*sizeof(double));
+  // Allocate HIP memory
+  hipMalloc((void **) &d_conv,   nx*ny*sizeof(double));
+  hipMalloc((void **) &d_fuzzyp, (nx+2*d)*(ny+2*d)*ny*sizeof(double));
 
   // Copy
 
-  cudaMemcpy(d_conv, convolution, nx*ny*sizeof(double),
-             cudaMemcpyHostToDevice);
+  hipMemcpy(d_conv, convolution, nx*ny*sizeof(double),
+             hipMemcpyHostToDevice);
 
-  cudaMemcpy(d_fuzzyp, fuzzyPadded, (nx+2*d)*(ny+2*d)*sizeof(double),
-             cudaMemcpyHostToDevice);
+  hipMemcpy(d_fuzzyp, fuzzyPadded, (nx+2*d)*(ny+2*d)*sizeof(double),
+             hipMemcpyHostToDevice);
 
 
   dim3 nthread = {16, 16, 1}; // 256 in a 16x16 grid
@@ -133,15 +133,15 @@ void dosharpen(char *infile, int nx, int ny, int verbose)
   /* Start of parallel region where filter is applied to fuzzy image */
 
   dosharpenpixel<<<nblock, nthread>>>(nx, ny, d, d_conv, d_fuzzyp);
-  cudaDeviceSynchronize();
+  hipDeviceSynchronize();
   
   /* End of parallel region and convolution computation */
   
   tstop = wtime();
   time = tstop - tstart;
   
-  cudaMemcpy(convolution, d_conv, nx*ny*sizeof(double),
-             cudaMemcpyDeviceToHost);
+  hipMemcpy(convolution, d_conv, nx*ny*sizeof(double),
+             hipMemcpyDeviceToHost);
 
   if (verbose)
     {
@@ -185,6 +185,6 @@ void dosharpen(char *infile, int nx, int ny, int verbose)
     }
 
   // Free memory
-  cudaFree(d_conv);
-  cudaFree(d_fuzzyp);
+  hipFree(d_conv);
+  hipFree(d_fuzzyp);
 }

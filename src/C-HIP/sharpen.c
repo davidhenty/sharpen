@@ -38,7 +38,7 @@ int main(void)
   
   
   printf("\n");
-  printf("Image sharpening code running on GPU with CUDA\n");
+  printf("Image sharpening code running on GPU with HIP\n");
   printf("\n");
   printf("Input file is: %s\n", filename);
   

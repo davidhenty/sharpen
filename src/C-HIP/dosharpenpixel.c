@@ -1,6 +1,8 @@
 #include <stdio.h>
 #include <math.h>
 
+#include <hip/hip_runtime.h>
+
 __device__
 double filter(int d, int i, int j);
 
