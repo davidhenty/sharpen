@@ -4,16 +4,17 @@
 #SBATCH --job-name=sharpen
 #SBATCH --time=00:02:00
 #SBATCH --output=%x-%j.out
-#SBATCH --gres=gpu:4
-#SBATCH --exclusive
+#SBATCH --gpus=4
+#SBATCH --nodes=1
+##SBATCH --exclusive
 #SBATCH --partition=gpu
-#SBATCH --cpus-per-task=40
-##SBATCH --qos=gpu
-#SBATCH --qos=reservation
-#SBATCH --reservation=m24oc_1369492
+#SBATCH --cpus-per-task=32
+#SBATCH --qos=gpu-shd
+##SBATCH --qos=reservation
+##SBATCH --reservation=m24oc_1369492
 
 # Load the default environments
-module --silent load intel-20.4/compilers
+#module --silent load intel-20.4/compilers
 
 # Set the binding
 
