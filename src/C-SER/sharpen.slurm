@@ -4,16 +4,10 @@
 #SBATCH --job-name=sharpen
 #SBATCH --time=0:01:0
 #SBATCH --ntasks=1
-##SBATCH --account=tc063
+# You should normally set this to your own budget, e.g. m25oc-s1234567
+#SBATCH --account=m25oc
 #SBATCH --partition=standard
 #SBATCH --qos=short
-
-# Load the default HPE MPI environment
-module load mpt
-module load intel-20.4/compilers
-
-# Change to the submission directory
-cd $SLURM_SUBMIT_DIR
 
 # Set the number of threads to 1
 #   This prevents any threaded system libraries from automatically
@@ -22,5 +16,5 @@ export OMP_NUM_THREADS=1
  
 # Launch the serial job
 #   Using 1 thread
-srun --cpu-bind=cores ./sharpen
+srun --unbuffered --hint=nomultithread --distribution=block:block ./sharpen
 
