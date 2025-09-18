@@ -7,25 +7,21 @@
 #SBATCH --nodes=1
 #SBATCH --tasks-per-node=1
 #SBATCH --cpus-per-task=4
-#SBATCH --account=tc063
+#SBATCH --account=m25oc
 #SBATCH --partition=standard
 #SBATCH --qos=short
 
 # Ensure cpus-per-task is exported to srun
 export SRUN_CPUS_PER_TASK=$SLURM_CPUS_PER_TASK
 
-# Load the default HPE MPI environment
-module load mpt
-module load intel-20.4/compilers
-
-# Change to the submission directory
-cd $SLURM_SUBMIT_DIR
-
 # Set the number of threads to the CPUs per task 
 export OMP_NUM_THREADS=$SLURM_CPUS_PER_TASK
+
+# Ensure threads are assigned to cores appropriately
+export OMP_PLACES=cores
 
 # Launch the parallel job
 #   Using 36 threads per node
 #   srun picks up the distribution from the sbatch options
-srun --cpu-bind=cores ./sharpen
+srun --unbuffered --distribution=block:block --hint=nomultithread ./sharpen
 
