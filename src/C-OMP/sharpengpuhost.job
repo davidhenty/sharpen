@@ -2,31 +2,24 @@
 
 # Slurm job options (name, compute nodes, job time)
 #SBATCH --job-name=sharpen
-#SBATCH --time=00:02:00
+#SBATCH --time=00:01:00
 #SBATCH --output=%x-%j.out
-#SBATCH --gpus=4
 #SBATCH --nodes=1
-##SBATCH --exclusive
+#SBATCH --gpus=4
+#SBATCH --exclusive
 #SBATCH --partition=gpu
-#SBATCH --cpus-per-task=32
-#SBATCH --qos=gpu-shd
-##SBATCH --qos=reservation
-##SBATCH --reservation=m24oc_1369492
-
-# Load the default environments
-#module --silent load intel-20.4/compilers
+#SBATCH --qos=gpu-exc
 
 # Set the binding
 
 export OMP_PLACES=cores
 
 # Launch the parallel job
-# GPU host nodes have 40 CPU-cores
+# GPU host nodes have 32 CPU-cores
 #   srun picks up the distribution from the sbatch options
 
-for t in 1 2 4 8 16 32 40
+for t in 1 2 4 8 16 32
 do
     export OMP_NUM_THREADS=$t
     srun --ntasks=1 --cpus-per-task=$OMP_NUM_THREADS --cpu-bind=cores ./sharpen
 done
-
