@@ -6,9 +6,18 @@ MF=	Makefile
 # Intel (icc), or Cray (craycc) - has been chosen by loading the
 # appropriate PrgEnv module prior to compilation.
 
-CC=	cc
-CFLAGS= --offload-arch=gfx90a -x hip -DC_SERIAL_PRACTICAL -g -fgpu-rdc
+# For GPUs on ARCHER2 you need these modules:
+# module load rocm
+# module load craype-accel-amd-gfx90a
+# module load craype-x86-milan
+
+CC=	hipcc
+CFLAGS= -D__HIP_PLATFORM_AMD__ --offload-arch=gfx90a -x hip -DC_SERIAL_PRACTICAL -g -fgpu-rdc
 LFLAGS=$(CFLAGS) --hip-link
+
+#CC=	cc
+#CFLAGS= --offload-arch=gfx90a -x hip -DC_SERIAL_PRACTICAL -g -fgpu-rdc
+#LFLAGS=$(CFLAGS) --hip-link
 
 #For Cirrus GPU use nvidia
 #CC=	nvcc
