@@ -14,7 +14,7 @@
 # Leave these options unchanged
 
 #SBATCH --partition=gpu
-#SBATCH --job-name=streamgpu
+#SBATCH --job-name=sharpengpu
 #SBATCH --time=00:01:00
 #SBATCH --output=%x-%j.out
 #SBATCH --gpus=1
