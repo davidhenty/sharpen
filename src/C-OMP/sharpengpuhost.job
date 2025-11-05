@@ -1,14 +1,25 @@
 #!/bin/bash
 
 # Slurm job options (name, compute nodes, job time)
+# This is setup to run in reserved queue for m25oc users on 7th Nov
+# Outside of this time or project use your own budget
+
+#SBATCH --qos=reservation
+#SBATCH --reservation=Q2881821
+
+# Edit the settings below if you are not in m25oc or outside of lab
+# #SBATCH --qos=gpu-exc
+# #SBATCH --account=m25oc-s1234567
+
+# Leave these options unchanged
+
+#SBATCH --partition=gpu
 #SBATCH --job-name=sharpengpuhost
 #SBATCH --time=00:01:00
 #SBATCH --output=%x-%j.out
 #SBATCH --nodes=1
 #SBATCH --gpus=4
 #SBATCH --exclusive
-#SBATCH --partition=gpu
-#SBATCH --qos=gpu-exc
 
 # Set the binding
 
