@@ -7,7 +7,7 @@
 #SBATCH --qos=reservation
 #SBATCH --reservation=Q2881821
 
-# Edit the settings below if you are not in m25oc or outside of lab
+# Use below if not in m25oc or outside of lab: change account as required
 # #SBATCH --qos=gpu-shd
 # #SBATCH --account=m25oc-s1234567
 
