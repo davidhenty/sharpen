@@ -5,7 +5,8 @@
 # Outside of this time or project use your own budget
 
 #SBATCH --qos=reservation
-#SBATCH --reservation=Q2881821
+#SBATCH --reservation=Q3037390_Tue
+
 
 # Use below if not in m25oc or outside of lab: change account as required
 # #SBATCH --qos=gpu-exc
@@ -28,6 +29,9 @@ export OMP_PLACES=cores
 # Launch the parallel job
 # GPU host nodes have 32 CPU-cores
 #   srun picks up the distribution from the sbatch options
+
+make clean
+make
 
 for t in 1 2 4 8 16 32
 do
