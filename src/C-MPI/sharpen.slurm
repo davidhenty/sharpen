@@ -4,8 +4,8 @@
 #SBATCH --job-name=sharpen
 #SBATCH --time=0:01:0
 #SBATCH --nodes=1
-#SBATCH --ntasks=4
-#SBATCH --tasks-per-node=4
+#SBATCH --ntasks=32
+#SBATCH --tasks-per-node=32
 #SBATCH --cpus-per-task=1
 # You should normally set this to your own budget, e.g. m25oc-s1234567
 #SBATCH --partition=standard
