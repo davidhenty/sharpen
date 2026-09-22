@@ -6,7 +6,7 @@
 #SBATCH --exclusive
 #SBATCH --nodes=1
 #SBATCH --tasks-per-node=1
-#SBATCH --cpus-per-task=32
+#SBATCH --cpus-per-task=4
 #SBATCH --partition=standard
 #SBATCH --qos=short
 
@@ -20,7 +20,7 @@ export OMP_NUM_THREADS=$SLURM_CPUS_PER_TASK
 export OMP_PLACES=cores
 
 # Launch the parallel job
-#   Using 32 threads per node
+#   Using 4 threads per node
 #   srun picks up the distribution from the sbatch options
 srun --unbuffered --distribution=block:block --hint=nomultithread ./sharpen
 
