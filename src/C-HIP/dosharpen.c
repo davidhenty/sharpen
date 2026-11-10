@@ -48,6 +48,7 @@ void dosharpen(char *infile, int nx, int ny, int verbose)
   double sharpCropped[nx-2*d][ny-2*d]; /* Will store the sharpened image cropped to remove a border layer distorted by the algorithm */
   
   double *d_fuzzyp, *d_conv;
+  hipError_t hiperr;
 
   char outfile[] = "sharpened.pgm";
   
@@ -105,16 +106,16 @@ void dosharpen(char *infile, int nx, int ny, int verbose)
     }
 
   // Allocate HIP memory
-  hipMalloc((void **) &d_conv,   nx*ny*sizeof(double));
-  hipMalloc((void **) &d_fuzzyp, (nx+2*d)*(ny+2*d)*ny*sizeof(double));
+  hiperr = hipMalloc((void **) &d_conv,   nx*ny*sizeof(double));
+  hiperr = hipMalloc((void **) &d_fuzzyp, (nx+2*d)*(ny+2*d)*ny*sizeof(double));
 
   // Copy
 
-  hipMemcpy(d_conv, convolution, nx*ny*sizeof(double),
-             hipMemcpyHostToDevice);
+  hiperr = hipMemcpy(d_conv, convolution, nx*ny*sizeof(double),
+                     hipMemcpyHostToDevice);
 
-  hipMemcpy(d_fuzzyp, fuzzyPadded, (nx+2*d)*(ny+2*d)*sizeof(double),
-             hipMemcpyHostToDevice);
+  hiperr = hipMemcpy(d_fuzzyp, fuzzyPadded, (nx+2*d)*(ny+2*d)*sizeof(double),
+                     hipMemcpyHostToDevice);
 
 
   dim3 nthread = {16, 16, 1}; // 256 in a 16x16 grid
@@ -133,15 +134,15 @@ void dosharpen(char *infile, int nx, int ny, int verbose)
   /* Start of parallel region where filter is applied to fuzzy image */
 
   dosharpenpixel<<<nblock, nthread>>>(nx, ny, d, d_conv, d_fuzzyp);
-  hipDeviceSynchronize();
+  hiperr = hipDeviceSynchronize();
   
   /* End of parallel region and convolution computation */
   
   tstop = wtime();
   time = tstop - tstart;
   
-  hipMemcpy(convolution, d_conv, nx*ny*sizeof(double),
-             hipMemcpyDeviceToHost);
+  hiperr = hipMemcpy(convolution, d_conv, nx*ny*sizeof(double),
+                     hipMemcpyDeviceToHost);
 
   if (verbose)
     {
@@ -185,6 +186,6 @@ void dosharpen(char *infile, int nx, int ny, int verbose)
     }
 
   // Free memory
-  hipFree(d_conv);
-  hipFree(d_fuzzyp);
+  hiperr = hipFree(d_conv);
+  hiperr = hipFree(d_fuzzyp);
 }
