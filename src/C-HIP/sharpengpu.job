@@ -9,7 +9,7 @@
 #SBATCH --account=m26oc-practical
 
 # Use below if outside of lab
-## SBATCH --qos=gpu-shd
+# #SBATCH --qos=gpu-shd
 
 # Leave these options unchanged
 
